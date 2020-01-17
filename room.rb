@@ -10,12 +10,16 @@ require 'pry'
 
 class Room
   attr_reader :song, :entry_fee
-
-  def initialize(space_int, entry_fee_float)
+  # bar obj is nil by default, if access to bar object is desired
+  # we can specify a bar object when initialising the room class
+  # and point a @bar instance variable to it. This will enable functionality of Bar class object to sell drinks to guests.
+  def initialize(space_int, entry_fee_float, bar_obj = nil)
     @entry_fee = entry_fee_float
     @space = space_int
     @song = nil
     @guests = []
+
+    @bar = bar_obj
 
     # to expand so we rooms can add songs to their playlists
     @playlist = []
@@ -57,4 +61,7 @@ class Room
     @guests.delete(guest_obj)
   end
 
+  def sell_a_drink_to_guest(guest_obj, drink_name_str)
+    @bar.sell_a_drink(guest_obj, drink_name_str)
+  end 
 end

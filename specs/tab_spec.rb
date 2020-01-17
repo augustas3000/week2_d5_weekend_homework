@@ -11,11 +11,21 @@ require_relative('../guest.rb')
 class TabTest < Minitest::Test
 
   def setup
+
+    # Bar and tab
+
+    @bar_obj = Bar.new()
+
+
+
+    # -----------------------------------------------------------
+
     # create a song obj that will be added to the room obj:
     @song_obj_room_1 = Song.new("ODB", "shimmy shimmy ya")
 
-    # create a room obj with space for 5 guests, and add a song to it.
-    @room_obj_1 = Room.new(5, 7)
+    # create a room obj with space for 5 guests, and add a song to it, also include @bar_obj as an argument, we can sell drinks to guests through it's methods and keep track of stock
+
+    @room_obj_1 = Room.new(5, 7.00, @bar_obj)
     @room_obj_1.change_song(@song_obj_room_1)
 
     # create six guests, with name, wallet, and fav song obj.
@@ -42,11 +52,37 @@ class TabTest < Minitest::Test
     @guest_6 = Guest.new("Dasy", 10.00, @guest_6_fav_song)
 
     # -----------------------------------------------------------
-    # drinks, tabs etc ....
+    # Checkin some folk:
 
     @room_obj_1.check_in_guest(@guest_1)
     @room_obj_1.check_in_guest(@guest_2)
 
+
+  end
+
+
+  def test_sell_a_drink_available_guest_has_money()
+    @room_obj_1.sell_a_drink_to_guest(@guest_1, "vodka")
+    #  money in for bar?
+    assert_equal(4.50, @bar_obj.check_till)
+    # money out for guest?
+    assert_equal(15.50, @guest_1.check_wallet)
+    # stock reduced?
+    assert_equal(99, @bar_obj.check_stock("vodka"))
+  end
+
+
+  def test_sell_a_drink_available_guest_no_money()
+
+    @guest_no_money = Guest.new("Peter", 1.50, @guest_3_fav_song)
+
+    assert_equal("Sorry, but you can't afford it.", @room_obj_1.sell_a_drink_to_guest(@guest_no_money, "vodka"))
+    #  money in for bar?
+    assert_equal(0.00, @bar_obj.check_till)
+    # money out for guest?
+    assert_equal(1.50, @guest_no_money.check_wallet)
+    # stock reduced?
+    assert_equal(100, @bar_obj.check_stock("vodka"))
   end
 
 end
