@@ -56,20 +56,95 @@ class TabTest < Minitest::Test
 
     @room_obj_1.check_in_guest(@guest_1)
     @room_obj_1.check_in_guest(@guest_2)
-
-
+    @room_obj_1.check_in_guest(@guest_3)
   end
 
 
   def test_sell_a_drink_available_guest_has_money()
     @room_obj_1.sell_a_drink_to_guest(@guest_1, "vodka")
     #  money in for bar?
-    assert_equal(4.50, @bar_obj.check_till)
-    # money out for guest?
-    assert_equal(15.50, @guest_1.check_wallet)
+    assert_equal(4.50, @bar_obj.check_bar_till)
+    # money out for guest? drink + entry
+    assert_equal(8.50, @guest_1.check_wallet)
     # stock reduced?
-    assert_equal(99, @bar_obj.check_stock("vodka"))
+    assert_equal(99, @bar_obj.check_bar_stock("vodka"))
+    # added to tab?
+    expected_hash = {name: "Steve",
+            drinks_bought: {"vodka" => 1}
+           }
+    assert_equal(expected_hash, @bar_obj.check_bar_tab(@guest_1))
+
   end
+
+
+
+
+  def test_add_to_tab_NEW_GUEST
+    # lets add a drink to tab of @guest_1
+    @bar_obj.add_drink_to_tab(@guest_1, "vodka")
+    expected_hash = {name: "Steve",
+            drinks_bought: {"vodka" => 1}
+           }
+    assert_equal(expected_hash, @bar_obj.check_bar_tab(@guest_1))
+
+  end
+
+  def test_add_to_tab_SAME_GUEST
+    @bar_obj.add_drink_to_tab(@guest_1, "vodka")
+    @bar_obj.add_drink_to_tab(@guest_1, "vodka")
+    @bar_obj.add_drink_to_tab(@guest_1, "vodka")
+
+    expected_hash = {name: "Steve",
+            drinks_bought: {"vodka" => 3}
+           }
+    assert_equal(expected_hash, @bar_obj.check_bar_tab(@guest_1))
+
+  end
+
+  def test_add_to_tab_SAME_GUEST_VAR_DRINKS
+    @bar_obj.add_drink_to_tab(@guest_1, "beer")
+    @bar_obj.add_drink_to_tab(@guest_1, "vodka")
+    @bar_obj.add_drink_to_tab(@guest_1, "vodka")
+    @bar_obj.add_drink_to_tab(@guest_1, "vodka")
+    @bar_obj.add_drink_to_tab(@guest_1, "cider")
+    @bar_obj.add_drink_to_tab(@guest_1, "cider")
+    @bar_obj.add_drink_to_tab(@guest_1, "beer")
+
+    expected_hash = {name: "Steve",
+            drinks_bought: {"vodka" => 3, "beer" => 2, "cider" => 2 }
+           }
+    assert_equal(expected_hash, @bar_obj.check_bar_tab(@guest_1))
+  end
+
+
+  def test_add_to_tab_VAR_GUESTS_VAR_DRINKS
+    @bar_obj.add_drink_to_tab(@guest_2, "beer")
+    @bar_obj.add_drink_to_tab(@guest_2, "vodka")
+    @bar_obj.add_drink_to_tab(@guest_2, "vodka")
+
+    @bar_obj.add_drink_to_tab(@guest_1, "vodka")
+    @bar_obj.add_drink_to_tab(@guest_1, "cider")
+
+    @bar_obj.add_drink_to_tab(@guest_3, "cider")
+    @bar_obj.add_drink_to_tab(@guest_3, "cider")
+    @bar_obj.add_drink_to_tab(@guest_3, "beer")
+
+    expected_hash_guest_1 = {name: "Steve",
+            drinks_bought: {"cider" => 1, "vodka" => 1}
+           }
+
+    expected_hash_guest_2 = {name: "Anna",
+            drinks_bought: {"beer" => 1, "vodka" => 2}
+           }
+    expected_hash_guest_3 = {name: "Peter",
+            drinks_bought: {"cider" => 2, "beer" => 1}
+           }
+
+    assert_equal(expected_hash_guest_1, @bar_obj.check_bar_tab(@guest_1))
+    assert_equal(expected_hash_guest_2, @bar_obj.check_bar_tab(@guest_2))
+    assert_equal(expected_hash_guest_3, @bar_obj.check_bar_tab(@guest_3))
+  end
+
 
 
   def test_sell_a_drink_available_guest_no_money()
@@ -78,11 +153,12 @@ class TabTest < Minitest::Test
 
     assert_equal("Sorry, but you can't afford it.", @room_obj_1.sell_a_drink_to_guest(@guest_no_money, "vodka"))
     #  money in for bar?
-    assert_equal(0.00, @bar_obj.check_till)
+    assert_equal(0.00, @bar_obj.check_bar_till)
     # money out for guest?
     assert_equal(1.50, @guest_no_money.check_wallet)
     # stock reduced?
-    assert_equal(100, @bar_obj.check_stock("vodka"))
+    assert_equal(100, @bar_obj.check_bar_stock("vodka"))
   end
+
 
 end

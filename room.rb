@@ -10,15 +10,19 @@ require 'pry'
 
 class Room
   attr_reader :song, :entry_fee
-  # bar obj is nil by default, if access to bar object is desired
-  # we can specify a bar object when initialising the room class
-  # and point a @bar instance variable to it. This will enable functionality of Bar class object to sell drinks to guests.
+
   def initialize(space_int, entry_fee_float, bar_obj = nil)
     @entry_fee = entry_fee_float
     @space = space_int
     @song = nil
     @guests = []
 
+    # event till will track money in from entry fee payed by each guest
+    @event_till = 0.00
+
+    # bar obj is nil by default, if access to bar object is desired
+    # we can specify a bar object when initialising the room class
+    # and point a @bar instance variable to it. This will enable functionality of Bar class object to sell drinks to guests.
     @bar = bar_obj
 
     # to expand so we rooms can add songs to their playlists
@@ -48,6 +52,10 @@ class Room
     if @guests.length >= @space
       return "This room is full, wait till somebody leaves."
     elsif guest_obj.check_wallet > @entry_fee
+      # money changes hand
+      guest_obj.pay(@entry_fee)
+      @event_till += @entry_fee
+      # guest checked in
       @guests.push(guest_obj)
       if guest_obj.fav_song?(@song) == true
         guest_obj.cheer
@@ -63,5 +71,18 @@ class Room
 
   def sell_a_drink_to_guest(guest_obj, drink_name_str)
     @bar.sell_a_drink(guest_obj, drink_name_str)
-  end 
+  end
+
+  # an instance method to check earnings from either event till
+  # bar till, or both: (options for till_str parameter:bar, event, total)
+  def check_till(till_str)
+    if till_str == "bar"
+      return @bar.check_bar_till
+    elsif till_str == "event"
+      return @event_till
+    elsif till_str == "total"
+      return @bar.check_bar_till + @event_till
+    end 
+  end
+
 end

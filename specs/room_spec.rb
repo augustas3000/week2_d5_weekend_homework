@@ -11,12 +11,22 @@ require_relative('../guest.rb')
 class RoomTest < Minitest::Test
 
   def setup
+    # Bar and tab
+
+    @bar_obj = Bar.new()
+
+
+
+    # ----------------------------------------------------
+
     # create a song obj that will be added to the room obj:
     @song_obj_room_1 = Song.new("ODB", "shimmy shimmy ya")
 
-    # create a room obj with space for 5 guests, and add a song to it.
-    @room_obj_1 = Room.new(5, 7)
+    # create a room obj with space for 5 guests, and add a song to it, also include @bar_obj as an argument, we can sell drinks to guests through it's methods and keep track of stock
+
+    @room_obj_1 = Room.new(5, 7.00, @bar_obj)
     @room_obj_1.change_song(@song_obj_room_1)
+
 
     # create six guests, with name, wallet, and fav song obj.
     # one guest more that room's capacity of 5 for checking if
@@ -84,6 +94,66 @@ class RoomTest < Minitest::Test
     # 2 people in the room so we check_out one, and expect one.
     @room_obj_1.check_out_guest(@guest_1)
     assert_equal(1, @room_obj_1.count_guests)
+  end
+
+  def test_check_till_bar
+
+    @room_obj_1.check_in_guest(@guest_1)
+    @room_obj_1.check_in_guest(@guest_2)
+    @room_obj_1.check_in_guest(@guest_3)
+    @room_obj_1.check_in_guest(@guest_4)
+
+    @room_obj_1.sell_a_drink_to_guest(@guest_1, "beer")
+    @room_obj_1.sell_a_drink_to_guest(@guest_1, "beer")
+    @room_obj_1.sell_a_drink_to_guest(@guest_1, "cider")
+
+    @room_obj_1.sell_a_drink_to_guest(@guest_2, "beer")
+    @room_obj_1.sell_a_drink_to_guest(@guest_2, "vodka")
+
+    @room_obj_1.sell_a_drink_to_guest(@guest_4, "vodka")
+    @room_obj_1.sell_a_drink_to_guest(@guest_4, "cider")
+
+    assert_equal(26.9, @room_obj_1.check_till("bar"))
+
+  end
+
+  def test_check_till_event
+
+    @room_obj_1.check_in_guest(@guest_1)
+    @room_obj_1.check_in_guest(@guest_2)
+    @room_obj_1.check_in_guest(@guest_3)
+    @room_obj_1.check_in_guest(@guest_4)
+
+    @room_obj_1.sell_a_drink_to_guest(@guest_1, "beer")
+    @room_obj_1.sell_a_drink_to_guest(@guest_1, "beer")
+    @room_obj_1.sell_a_drink_to_guest(@guest_1, "cider")
+
+    @room_obj_1.sell_a_drink_to_guest(@guest_2, "beer")
+    @room_obj_1.sell_a_drink_to_guest(@guest_2, "vodka")
+
+    @room_obj_1.sell_a_drink_to_guest(@guest_4, "vodka")
+    @room_obj_1.sell_a_drink_to_guest(@guest_4, "cider")
+
+    assert_equal(28, @room_obj_1.check_till("event"))
+  end
+
+  def test_check_till_total
+    @room_obj_1.check_in_guest(@guest_1)
+    @room_obj_1.check_in_guest(@guest_2)
+    @room_obj_1.check_in_guest(@guest_3)
+    @room_obj_1.check_in_guest(@guest_4)
+
+    @room_obj_1.sell_a_drink_to_guest(@guest_1, "beer")
+    @room_obj_1.sell_a_drink_to_guest(@guest_1, "beer")
+    @room_obj_1.sell_a_drink_to_guest(@guest_1, "cider")
+
+    @room_obj_1.sell_a_drink_to_guest(@guest_2, "beer")
+    @room_obj_1.sell_a_drink_to_guest(@guest_2, "vodka")
+
+    @room_obj_1.sell_a_drink_to_guest(@guest_4, "vodka")
+    @room_obj_1.sell_a_drink_to_guest(@guest_4, "cider")
+
+    assert_equal(54.9, @room_obj_1.check_till("total"))
   end
 
 end
