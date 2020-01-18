@@ -11,8 +11,7 @@ require_relative('../guest.rb')
 class RoomTest < Minitest::Test
 
   def setup
-    # Bar and tab
-
+    # Initiate bar object from Bar class
     @bar_obj = Bar.new()
 
 
