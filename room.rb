@@ -35,7 +35,24 @@ class Room
     @playlist = []
   end
 
-  # instance method to change songs. later on if we add playlist fiunctionality we can update this method to randomly choose a song from playlist?
+  def check_playlist()
+    return @playlist
+  end
+
+  def add_a_song_to_playlist(song_obj)
+
+    for playlist_song_obj in @playlist
+      if playlist_song_obj.song_name == song_obj.song_name && playlist_song_obj.artist_name == song_obj.artist_name
+        return "This song is already in the playlist."
+        # return will exit the loop and the method?
+      end
+    end
+
+    @playlist.push(song_obj)
+
+  end
+
+  # instance method to change songs. later on if we add playlist fiunctionality we can write a method to randomly choose a song from playlist and then change song with change_song method.
 
   def change_song(song_obj)
     @song = song_obj
@@ -47,6 +64,33 @@ class Room
         return guest_obj.cheer
       end
     end
+
+  end
+
+# TO BE TESTED:
+
+  def change_song_playlist(artist_name_str = nil, song_name_str = nil)
+
+    if @playlist.empty?
+      return "Playlist is empty..."
+    end
+
+    if artist_name_str == nil && song_name_str == nil
+      change_song(@playlist.sample)
+    end
+
+    for song_obj in @playlist
+      if artist_name_str == song_obj.artist_name && song_name_str == song_obj.song_name
+        change_song(song_obj)
+        return
+      end
+    end
+
+    return "Song not found..."
+    # if no argument given changes song randomly
+
+    # if sonng name and artist specified changes the song.
+    # with chenge song function
 
   end
 

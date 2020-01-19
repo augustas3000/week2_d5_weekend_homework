@@ -24,6 +24,7 @@ class GuestTest < Minitest::Test
     @guest_1_fav_song = Song.new("Drake", "God's plan")
     @guest_1 = Guest.new("Steve", 20.00, @guest_1_fav_song)
 
+
     @guest_2_fav_song = Song.new("MF DOOM", "Doomsday")
     @guest_2 = Guest.new("Anna", 35.00, @guest_2_fav_song)
 
@@ -86,9 +87,11 @@ class GuestTest < Minitest::Test
     # then the room changes a song to "MF DOOM - Doomsday" which
     # is guest 2's fav and guest 7's, we expect a cheer rigth after song changes from both.
 
-    assert_equal(@guest_2.cheer ,@room_obj_1.change_song(@guest_2_fav_song))
+    @song = Song.new("MF DOOM", "Doomsday")
 
-    assert_equal(guest_7.cheer ,@room_obj_1.change_song(@guest_2_fav_song))
+    assert_equal("Yeeeeeeeeeeee!!! Thats my fav!!!" ,@room_obj_1.change_song(@song))
+
+    assert_equal("Yeeeeeeeeeeee!!! Thats my fav!!!" ,@room_obj_1.change_song(@song))
   end
 
 

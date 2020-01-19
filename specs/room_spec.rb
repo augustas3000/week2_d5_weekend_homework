@@ -11,12 +11,13 @@ require_relative('../guest.rb')
 class RoomTest < Minitest::Test
 
   def setup
+
     # Initiate bar object from Bar class
     @bar_obj = Bar.new()
 
-
-
     # ----------------------------------------------------
+    # Creating a playlist:
+
 
     # create a song obj that will be added to the room obj:
     @song_obj_room_1 = Song.new("ODB", "shimmy shimmy ya")
@@ -160,9 +161,9 @@ class RoomTest < Minitest::Test
       @room_obj_1.check_in_guest(@guest_2)
       @room_obj_1.check_in_guest(@guest_3)
           # ensure guests have enough money for this test
-      @guest_1.guest_wallet = 100.00
-      @guest_2.guest_wallet = 100.00
-      @guest_3.guest_wallet = 100.00
+      @guest_1.pay(-100)
+      @guest_2.pay(-100)
+      @guest_3.pay(-100)
 
       # guest objs 1-3 were checked in and buy a lot of drinks
 
@@ -197,6 +198,117 @@ class RoomTest < Minitest::Test
 
   end
 
+  def test_add_a_song_to_playlist_empty
+    @song_1 = Song.new("Drake", "God's plan")
+    @song_2 = Song.new("Cousin Stizz", "No Bells")
+    @song_3 = Song.new("MF DOOM", "Doomsday")
+    @song_4 = Song.new("LTJ Bukem", "Atlantis")
 
+    @room_obj_1.add_a_song_to_playlist(@song_1)
+
+    assert_equal(1, @room_obj_1.check_playlist.length)
+
+  end
+
+  def test_add_a_song_to_playlist_more_songs
+    @song_1 = Song.new("Drake", "God's plan")
+    @song_2 = Song.new("Cousin Stizz", "No Bells")
+    @song_3 = Song.new("MF DOOM", "Doomsday")
+    @song_4 = Song.new("LTJ Bukem", "Atlantis")
+
+    @room_obj_1.add_a_song_to_playlist(@song_1)
+    @room_obj_1.add_a_song_to_playlist(@song_2)
+    @room_obj_1.add_a_song_to_playlist(@song_3)
+    @room_obj_1.add_a_song_to_playlist(@song_4)
+
+    assert_equal(4, @room_obj_1.check_playlist.length)
+  end
+
+
+  def test_add_a_song_to_playlist_song_exists
+    @song_1 = Song.new("Drake", "God's plan")
+    @song_2 = Song.new("Cousin Stizz", "No Bells")
+    @song_3 = Song.new("MF DOOM", "Doomsday")
+    @song_4 = Song.new("LTJ Bukem", "Atlantis")
+
+    @room_obj_1.add_a_song_to_playlist(@song_1)
+    @room_obj_1.add_a_song_to_playlist(@song_2)
+    @room_obj_1.add_a_song_to_playlist(@song_3)
+
+    actual = @room_obj_1.add_a_song_to_playlist(@song_2)
+    expected = "This song is already in the playlist."
+    assert_equal(expected, actual)
+    assert_equal(3, @room_obj_1.check_playlist.length)
+  end
+
+  def test_change_song_playlist_random
+
+    # change room obj song to nil
+    @room_obj_1.change_song(nil)
+
+    @song_1 = Song.new("Drake", "God's plan")
+    @song_2 = Song.new("Cousin Stizz", "No Bells")
+    @song_3 = Song.new("MF DOOM", "Doomsday")
+    @song_4 = Song.new("LTJ Bukem", "Atlantis")
+
+    @room_obj_1.add_a_song_to_playlist(@song_1)
+    @room_obj_1.add_a_song_to_playlist(@song_2)
+    @room_obj_1.add_a_song_to_playlist(@song_3)
+    @room_obj_1.add_a_song_to_playlist(@song_4)
+    # if the @song variable is currently nil, and the 3 songs
+    # were added to playlist, when we call change_song_playlist without arguments it should randomly pick a song object from the playlist, and
+    # point @song variable to it. So expecting the result not to equal nil:
+    @room_obj_1.change_song_playlist()
+    result = @room_obj_1.song
+    assert result != nil
+
+    # if there is a song playing, and we change the song randomly again will the two be different songs:.... not sure how to assert if the function is randomly selecting from playlist but if we run the commented test multiple times it sometimes passes sometimes fails, good enough for now".
+    #
+    # @room_obj_1.change_song_playlist()
+    # result2 = "#{@room_obj_1.song.artist_name} - #{@room_obj_1.song.song_name}"
+    #
+    # @room_obj_1.change_song_playlist()
+    #
+    # result3 = "#{@room_obj_1.song.artist_name} - #{@room_obj_1.song.song_name}"
+    #
+    # assert_equal(result2,result3)
+  end
+
+
+
+  def test_change_song_playlist_empty
+
+    assert_equal("Playlist is empty...",@room_obj_1.change_song_playlist)
+  end
+
+  def test_change_song_playlist_artist_and_song_provided_found
+    @song_1 = Song.new("Drake", "God's plan")
+    @song_2 = Song.new("Cousin Stizz", "No Bells")
+    @song_3 = Song.new("MF DOOM", "Doomsday")
+    @song_4 = Song.new("LTJ Bukem", "Atlantis")
+
+    @room_obj_1.add_a_song_to_playlist(@song_1)
+    @room_obj_1.add_a_song_to_playlist(@song_2)
+    @room_obj_1.add_a_song_to_playlist(@song_3)
+    @room_obj_1.add_a_song_to_playlist(@song_4)
+
+    @room_obj_1.change_song_playlist("MF DOOM", "Doomsday")
+    assert_equal("MF DOOM - Doomsday", "#{@room_obj_1.song.artist_name} - #{@room_obj_1.song.song_name}")
+  end
+
+
+  def test_change_song_playlist_artist_and_song_provided_not_found
+    @song_1 = Song.new("Drake", "God's plan")
+    @song_2 = Song.new("Cousin Stizz", "No Bells")
+    @song_3 = Song.new("MF DOOM", "Doomsday")
+    @song_4 = Song.new("LTJ Bukem", "Atlantis")
+
+    @room_obj_1.add_a_song_to_playlist(@song_1)
+    @room_obj_1.add_a_song_to_playlist(@song_2)
+    @room_obj_1.add_a_song_to_playlist(@song_3)
+    @room_obj_1.add_a_song_to_playlist(@song_4)
+
+    assert_equal("Song not found...", @room_obj_1.change_song_playlist("ACDC", "Thunder") )
+  end
 
 end
