@@ -34,6 +34,13 @@ class Bar
 
   end
 
+
+  def report_tab()
+    return @tab
+  end
+
+
+
   # this will normally be called from the main Room class object(see sell_a_drink_to_guest method in Room class)
   # function will take in  a guest object and a drink name string)
   def sell_a_drink(guest_obj, drink_name_str)

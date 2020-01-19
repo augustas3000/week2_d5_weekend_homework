@@ -161,4 +161,53 @@ class TabTest < Minitest::Test
   end
 
 
+
+
+  def test_report_tab()
+    # ensure guests have enough money for this test
+    @guest_1.guest_wallet = 100.00
+    @guest_2.guest_wallet = 100.00
+    @guest_3.guest_wallet = 100.00
+
+    # guest objs 1-3 were checked in and buy a lot of drinks
+
+    @room_obj_1.sell_a_drink_to_guest(@guest_1, "vodka")
+    @room_obj_1.sell_a_drink_to_guest(@guest_1, "vodka")
+    @room_obj_1.sell_a_drink_to_guest(@guest_1, "beer")
+
+
+    @room_obj_1.sell_a_drink_to_guest(@guest_2, "cider")
+    @room_obj_1.sell_a_drink_to_guest(@guest_2, "cider")
+    @room_obj_1.sell_a_drink_to_guest(@guest_2, "cider")
+    @room_obj_1.sell_a_drink_to_guest(@guest_2, "cider")
+    @room_obj_1.sell_a_drink_to_guest(@guest_2, "beer")
+    @room_obj_1.sell_a_drink_to_guest(@guest_2, "beer")
+
+
+    @room_obj_1.sell_a_drink_to_guest(@guest_3, "beer")
+    @room_obj_1.sell_a_drink_to_guest(@guest_3, "beer")
+    @room_obj_1.sell_a_drink_to_guest(@guest_3, "beer")
+    @room_obj_1.sell_a_drink_to_guest(@guest_3, "beer")
+
+    # define an expected tab summary in raw hashes:
+expected_tab = {@guest_1 => {name: @guest_1.guest_name,
+                 drinks_bought: {"vodka" => 2, "beer" => 1}},
+    @guest_2 => {name: @guest_2.guest_name,
+                drinks_bought: {"cider" => 4, "beer" => 2}},
+    @guest_3 => {name: @guest_3.guest_name,
+                 drinks_bought: {"beer" => 4}}
+              }
+
+  assert_equal(expected_tab, @bar_obj.report_tab)
+
+  end
+
+
+
+
+
+
+
+#
+
 end

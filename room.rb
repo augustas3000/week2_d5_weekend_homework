@@ -99,6 +99,9 @@ class Room
     end
   end
 
-
+  def report_bar_tab()
+  # to return a tab summary of all guest objects that were sold drinks.
+    return @bar.report_tab()
+  end
 
 end

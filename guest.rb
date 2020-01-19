@@ -2,6 +2,8 @@
 
 class Guest
   attr_reader :guest_name
+  # delete this afetr test:
+  attr_accessor :guest_wallet
 
   def initialize(guest_name_str, guest_wallet_float, guest_fav_song_obj)
     @guest_name = guest_name_str
