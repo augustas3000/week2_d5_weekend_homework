@@ -1,8 +1,6 @@
 
-
 class Guest
   attr_reader :guest_name
-
 
   def initialize(guest_name_str, guest_wallet_float, guest_fav_song_obj)
     @guest_name = guest_name_str
@@ -27,9 +25,4 @@ class Guest
   def cheer
     return "Yeeeeeeeeeeee!!! Thats my fav!!!"
   end
-
-
-
 end
-
-# Guests could have a favourite song, and if their favourite song is on the room’s playlist, they can cheer loudly! (return a string like “Whoo!”)

@@ -165,9 +165,9 @@ class TabTest < Minitest::Test
 
   def test_report_tab()
     # ensure guests have enough money for this test
-    @guest_1.guest_wallet = 100.00
-    @guest_2.guest_wallet = 100.00
-    @guest_3.guest_wallet = 100.00
+    @guest_1.pay(-100.00)
+    @guest_2.pay(-100.00)
+    @guest_3.pay(-100.00)
 
     # guest objs 1-3 were checked in and buy a lot of drinks
 
